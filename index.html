@@ -9,6 +9,7 @@
   <style>
     :root {
       --primary: #4f46e5;
+      --pink: #ec4899;
       --bg: #f8fafc;
       --card: #ffffff;
       --text: #0f172a;
@@ -18,17 +19,19 @@
       --success: #10b981;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding-bottom: 70px; }
+    body { background-color: var(--bg); color: var(--text); padding-bottom: 80px; }
     header { background: var(--primary); color: white; padding: 1rem; text-align: center; font-size: 1.2rem; font-weight: bold; }
-    nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 0.8rem 0; }
-    nav button { background: none; border: none; color: var(--muted); font-size: 0.85rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
+    nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 0.6rem 0; overflow-x: auto; }
+    nav button { background: none; border: none; color: var(--muted); font-size: 0.75rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; min-width: 55px; }
     nav button.active { color: var(--primary); font-weight: bold; }
     .page { display: none; padding: 1rem; max-width: 600px; margin: 0 auto; }
     .page.active { display: block; }
     .card { background: var(--card); padding: 1rem; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
     h2 { font-size: 1.1rem; margin-bottom: 0.8rem; }
+    label { font-size: 0.85rem; color: var(--muted); font-weight: 600; display: block; margin-bottom: 0.2rem; }
     input, select, textarea { width: 100%; padding: 0.6rem; margin-bottom: 0.6rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; }
     button.btn-primary { background: var(--primary); color: white; border: none; padding: 0.6rem 1rem; border-radius: 6px; cursor: pointer; width: 100%; font-size: 0.95rem; font-weight: bold; }
+    button.btn-pink { background: var(--pink); color: white; border: none; padding: 0.6rem 1rem; border-radius: 6px; cursor: pointer; width: 100%; font-size: 0.95rem; font-weight: bold; }
     .list-item { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0; border-bottom: 1px solid var(--border); }
     .list-item:last-child { border-bottom: none; }
     .item-text { flex-grow: 1; }
@@ -36,6 +39,7 @@
     .delete-btn { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 0.9rem; margin-left: 0.5rem; }
     .flex-row { display: flex; gap: 0.5rem; }
     .stat-box { text-align: center; padding: 0.8rem; background: var(--bg); border-radius: 8px; flex: 1; }
+    .highlight-card { background: #fdf2f8; border-color: #fbcfe8; }
   </style>
 </head>
 <body>
@@ -62,6 +66,11 @@
     </div>
   </div>
 
+  <div class="card highlight-card">
+    <h2 style="color: var(--pink);">🌸 Period Tracker Quick Status</h2>
+    <div id="dash-period">No period data logged yet.</div>
+  </div>
+
   <div class="card">
     <h2>Pending Tasks</h2>
     <div id="dash-tasks">No tasks added yet.</div>
@@ -70,6 +79,38 @@
   <div class="card">
     <h2>Upcoming Reminders</h2>
     <div id="dash-reminders">No reminders.</div>
+  </div>
+</div>
+
+<!-- PERIOD TRACKER PAGE -->
+<div id="period" class="page">
+  <div class="card highlight-card">
+    <h2 style="color: var(--pink);">🌸 Next Period Prediction</h2>
+    <div style="text-align: center; padding: 0.5rem 0;">
+      <p id="next-period-date" style="font-size: 1.3rem; font-weight: bold; color: var(--pink);">Not set</p>
+      <small id="days-countdown" style="color: var(--muted); display: block; margin-top: 0.3rem;">Log your first period below to calculate.</small>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Log Period Dates</h2>
+    <form id="period-form">
+      <label for="period-start">Start Date</label>
+      <input type="date" id="period-start" required>
+      
+      <label for="period-end">End Date (Optional)</label>
+      <input type="date" id="period-end">
+
+      <label for="cycle-length">Average Cycle Length (Days)</label>
+      <input type="number" id="cycle-length" value="28" min="20" max="45" required>
+
+      <button class="btn-pink" type="submit">Save Period Dates</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Cycle History</h2>
+    <div id="period-list"></div>
   </div>
 </div>
 
@@ -104,7 +145,7 @@
   </div>
 </div>
 
-<!-- BUDGET & EXPENSE PAGE -->
+<!-- BUDGET PAGE -->
 <div id="budget" class="page">
   <div class="card">
     <h2>Add Transaction</h2>
@@ -143,6 +184,7 @@
 <!-- NAVIGATION BAR -->
 <nav>
   <button onclick="showPage('dashboard')" class="active">📊<br>Home</button>
+  <button onclick="showPage('period')">🌸<br>Period</button>
   <button onclick="showPage('tasks')">✅<br>Tasks</button>
   <button onclick="showPage('reminders')">⏰<br>Reminders</button>
   <button onclick="showPage('budget')">💰<br>Budget</button>
