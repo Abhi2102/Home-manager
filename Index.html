@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home Manager</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#4f46e5">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --danger: #ef4444;
+      --success: #10b981;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding-bottom: 70px; }
+    header { background: var(--primary); color: white; padding: 1rem; text-align: center; font-size: 1.2rem; font-weight: bold; }
+    nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 0.8rem 0; }
+    nav button { background: none; border: none; color: var(--muted); font-size: 0.85rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
+    nav button.active { color: var(--primary); font-weight: bold; }
+    .page { display: none; padding: 1rem; max-width: 600px; margin: 0 auto; }
+    .page.active { display: block; }
+    .card { background: var(--card); padding: 1rem; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    h2 { font-size: 1.1rem; margin-bottom: 0.8rem; }
+    input, select, textarea { width: 100%; padding: 0.6rem; margin-bottom: 0.6rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; }
+    button.btn-primary { background: var(--primary); color: white; border: none; padding: 0.6rem 1rem; border-radius: 6px; cursor: pointer; width: 100%; font-size: 0.95rem; font-weight: bold; }
+    .list-item { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0; border-bottom: 1px solid var(--border); }
+    .list-item:last-child { border-bottom: none; }
+    .item-text { flex-grow: 1; }
+    .item-text.done { text-decoration: line-through; color: var(--muted); }
+    .delete-btn { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 0.9rem; margin-left: 0.5rem; }
+    .flex-row { display: flex; gap: 0.5rem; }
+    .stat-box { text-align: center; padding: 0.8rem; background: var(--bg); border-radius: 8px; flex: 1; }
+  </style>
+</head>
+<body>
+
+<header>🏠 Home Manager Pro</header>
+
+<!-- DASHBOARD PAGE -->
+<div id="dashboard" class="page active">
+  <div class="card">
+    <h2>Financial Overview</h2>
+    <div class="flex-row">
+      <div class="stat-box">
+        <small>Income</small>
+        <p id="dash-income" style="color:var(--success); font-weight:bold;">$0</p>
+      </div>
+      <div class="stat-box">
+        <small>Expenses</small>
+        <p id="dash-expense" style="color:var(--danger); font-weight:bold;">$0</p>
+      </div>
+      <div class="stat-box">
+        <small>Balance</small>
+        <p id="dash-balance" style="font-weight:bold;">$0</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Pending Tasks</h2>
+    <div id="dash-tasks">No tasks added yet.</div>
+  </div>
+
+  <div class="card">
+    <h2>Upcoming Reminders</h2>
+    <div id="dash-reminders">No reminders.</div>
+  </div>
+</div>
+
+<!-- TASKS PAGE -->
+<div id="tasks" class="page">
+  <div class="card">
+    <h2>Add Task</h2>
+    <form id="task-form">
+      <input type="text" id="task-input" placeholder="Task description..." required>
+      <button class="btn-primary" type="submit">Add Task</button>
+    </form>
+  </div>
+  <div class="card">
+    <h2>Your Tasks</h2>
+    <div id="tasks-list"></div>
+  </div>
+</div>
+
+<!-- REMINDERS PAGE -->
+<div id="reminders" class="page">
+  <div class="card">
+    <h2>Add Reminder</h2>
+    <form id="reminder-form">
+      <input type="text" id="reminder-title" placeholder="Reminder (e.g. Pay Electricity Bill)" required>
+      <input type="date" id="reminder-date" required>
+      <button class="btn-primary" type="submit">Add Reminder</button>
+    </form>
+  </div>
+  <div class="card">
+    <h2>Reminders List</h2>
+    <div id="reminders-list"></div>
+  </div>
+</div>
+
+<!-- BUDGET & EXPENSE PAGE -->
+<div id="budget" class="page">
+  <div class="card">
+    <h2>Add Transaction</h2>
+    <form id="budget-form">
+      <input type="text" id="trans-title" placeholder="Description" required>
+      <input type="number" id="trans-amount" placeholder="Amount" step="0.01" required>
+      <select id="trans-type">
+        <option value="expense">Expense</option>
+        <option value="income">Income</option>
+      </select>
+      <button class="btn-primary" type="submit">Save Transaction</button>
+    </form>
+  </div>
+  <div class="card">
+    <h2>Transaction Log</h2>
+    <div id="budget-list"></div>
+  </div>
+</div>
+
+<!-- NOTES PAGE -->
+<div id="notes" class="page">
+  <div class="card">
+    <h2>Add Note</h2>
+    <form id="note-form">
+      <input type="text" id="note-title" placeholder="Title" required>
+      <textarea id="note-content" placeholder="Write your note..." rows="3" required></textarea>
+      <button class="btn-primary" type="submit">Save Note</button>
+    </form>
+  </div>
+  <div class="card">
+    <h2>Saved Notes</h2>
+    <div id="notes-list"></div>
+  </div>
+</div>
+
+<!-- NAVIGATION BAR -->
+<nav>
+  <button onclick="showPage('dashboard')" class="active">📊<br>Home</button>
+  <button onclick="showPage('tasks')">✅<br>Tasks</button>
+  <button onclick="showPage('reminders')">⏰<br>Reminders</button>
+  <button onclick="showPage('budget')">💰<br>Budget</button>
+  <button onclick="showPage('notes')">📝<br>Notes</button>
+</nav>
+
+<script src="app.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js');
+  }
+</script>
+</body>
+</html>
